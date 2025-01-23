@@ -8,10 +8,10 @@
     /* Flower Background */
     body {
       font-family: Arial, sans-serif;
-      background-image: url('Image/s1.jpg'); /* Replace with your actual flower background image URL */
+      background-image: url('s1.jpg'); /* Replace with your actual flower background image URL */
       background-size: cover;
       background-position: center;
-      color: white;
+      color: black; /* Default text color for the body */
       margin: 0;
       padding: 0;
       display: flex;
@@ -22,10 +22,16 @@
     .container {
       max-width: 500px;
       padding: 20px;
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: rgba(255, 255, 255, 0.7); /* Slightly transparent white background */
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
+    }
+    h2 {
+      color: rgb(255, 119, 0); /* Orange color for the heading */
+    }
+    p {
+      color: black; /* Black color for the paragraph text */
     }
     .container input, .container button {
       padding: 10px;
@@ -35,13 +41,13 @@
       box-sizing: border-box;
     }
     .container button {
-      background-color: #4CAF50;
-      color: white;
+      background-color: #4CAF50; /* Green color for the button */
+      color: white; /* White text on the button */
       border: none;
       cursor: pointer;
     }
     .container button:hover {
-      background-color: #45a049;
+      background-color: #45a049; /* Darker green on hover */
     }
   </style>
 </head>
@@ -52,49 +58,34 @@
     <input type="text" id="nameInput" placeholder="Your Name" required>
     <button onclick="submitName()">Submit</button>
   </div>
-  <script>
-    // Google Apps Script web app URL (replace with your actual URL)
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbw3UO-nvr_c93R2y1BgfAd4mkrjW99bv1lHrTpr4EG0k-ebAdxmiKZTSGIaiMTVcYAk/exec';
-
-    // Function to handle form submission and save name in Google Sheets
-    function submitName() {
-      const nameInput = document.getElementById('nameInput').value;
-      if (nameInput) {
-        const formData = new FormData();
-        formData.append('name', nameInput);
-
-        fetch(scriptUrl, {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.result === "Success") {
-            alert('Thank you for your RSVP!');
-            document.getElementById('nameInput').value = ''; // Clear the input field
-          } else {
-            alert('Something went wrong. Please try again.');
-          }
-        })
-        .catch(error => alert('Error submitting name: ' + error));
-      } else {
-        alert('Please enter a name');
-      }
-    }
-  </script>
 
   <script>
     function submitName() {
       const name = document.getElementById('nameInput').value.trim();
 
       if (name === "") {
-        alert("Please enter your name.");
-        return;
+        return; // Do nothing if name is empty
       }
 
-      // Redirect to invitation page with the name as a URL parameter
-      const invitationUrl = `invitation.html?name=${encodeURIComponent(name)}`;
-      window.location.href = invitationUrl;
+      // Define the Google Apps Script URL
+      const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyYieIRwdcxqMJk75tKQ1umEFmyjJ8h3iJ575ey34Y1RT6FriQSDHQMVUAZT-VeZ6SIKQ/exec';
+
+      // Send the name to the Google Sheet via a POST request
+      const formData = new FormData();
+      formData.append('name', name);
+
+      // Send data in the background, without waiting for the response
+      fetch(googleScriptUrl, {
+        method: 'POST',
+        body: formData
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Optional: Show an error message to the user if something goes wrong.
+      });
+
+      // Redirect immediately to the invitation page without waiting for the response
+      window.location.href = `invitation.html?name=${encodeURIComponent(name)}`;
     }
   </script>
 </body>
